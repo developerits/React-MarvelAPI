@@ -10,10 +10,6 @@ import MarvelService from "../../services/MarvelService";
 // 3) Реализовать charList, сделать запрос, получить 9 персонажей, построить интерфейс. Не забыть про уникальные идентификаторы персонажей
 
 class RandomChar extends Component {
-  constructor(props) {
-    super(props);
-    console.log("constructor");
-  }
   state = {
     char: {},
     loading: true,
@@ -21,7 +17,6 @@ class RandomChar extends Component {
   };
 
   componentDidMount() {
-    console.log("mount");
     this.updateChar();
   }
 
@@ -60,7 +55,6 @@ class RandomChar extends Component {
   };
 
   render() {
-    console.log("render");
     const { char, loading, error } = this.state;
     const errorMessage = error ? <ErrorMessage /> : null;
     const spinner = loading ? <Spinner /> : null;

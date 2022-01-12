@@ -1,4 +1,5 @@
 import { Component } from "react";
+import PropTypes from "prop-types";
 
 import MarvelService from "../../services/MarvelService";
 import Spinner from "../spinner/Spinner";
@@ -20,20 +21,16 @@ class CharInfo extends Component {
   marvelService = new MarvelService();
 
   componentDidMount() {
-    console.log("mount");
     this.updateChar();
   }
 
   componentDidUpdate(prevProps) {
-    console.log("update");
-
     if (this.props.charId !== prevProps.charId) {
       this.updateChar();
     }
   }
 
   onCharLoaded = (char) => {
-    console.log("onCharLoaded");
     this.setState({
       char,
       loading: false,
@@ -66,6 +63,14 @@ class CharInfo extends Component {
       .then(this.onCharLoaded)
       .catch(this.onError);
   };
+
+  componentDidCatch(err, info) {
+    console.log(err, info);
+    this.setState({
+      error: true,
+    });
+  }
+
   render() {
     const { char, loading, error } = this.state;
 
@@ -86,7 +91,6 @@ class CharInfo extends Component {
 }
 
 const View = ({ char }) => {
-  console.log(char);
   const { name, description, thumbnail, homepage, wiki, comics } = char;
 
   let imgStyle = { objectFit: "cover" };
@@ -129,6 +133,10 @@ const View = ({ char }) => {
       </ul>
     </>
   );
+};
+
+CharInfo.propTypes = {
+  charId: PropTypes.number,
 };
 
 export default CharInfo;
