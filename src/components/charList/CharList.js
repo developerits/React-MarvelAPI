@@ -92,6 +92,11 @@ const CharList = (props) => {
     return <ul className="char__grid">{items}</ul>;
   };
 
+  if (loading) {
+    import("./someFunc")
+      .then((obj) => obj.default())
+      .catch();
+  }
   const items = renderItems(charList);
   const errorMessage = error ? <ErrorMessage /> : null;
   const loader = loading && !newItemLoading ? <Spinner /> : null;

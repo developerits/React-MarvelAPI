@@ -1,11 +1,14 @@
+import { lazy, Suspense } from "react";
 import AppHeader from "../appHeader/AppHeader";
-import { MainPage, ComicsPage } from "../pages";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Spinner from "../spinner/Spinner";
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-} from "react-router-dom/cjs/react-router-dom.min";
+const MainPage = lazy(() => import("../pages/MainPage"));
+const ComicsPage = lazy(() => import("../pages/ComicsPage"));
+const SingleComicPage = lazy(() => import("../pages/SingleComicPage"));
+const NoMatch = lazy(() => import("../pages/404"));
+
+// TODO  Кликабельный ссылочки комиксов у charinfo; несуществующая страницы - возвращаемся на страницу на которой был пользователь.
 
 const App = () => {
   return (
@@ -13,14 +16,14 @@ const App = () => {
       <div className="app">
         <AppHeader />
         <main>
-          <Switch>
-            <Route exact path="/">
-              <MainPage />
-            </Route>
-            <Route exact path="/comics">
-              <ComicsPage />
-            </Route>
-          </Switch>
+          <Suspense fallback={<Spinner />}>
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/comics" element={<ComicsPage />} />
+              <Route path="/comics/:comicId" element={<SingleComicPage />} />
+              <Route path="*" element={<NoMatch />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     </Router>
