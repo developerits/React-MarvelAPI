@@ -14,8 +14,10 @@ import ErrorMessage from "../errorMessage/ErrorMessage";
 const SearchChar = () => {
   const [character, setCharacter] = useState(null);
   const [message, setMessage] = useState("");
-  const { loading, error, getCharacterByName, clearError } = useMarvelService();
-  const errorMessage = error ? <ErrorMessage /> : null;
+  const { getCharacterByName, clearError, process, setProcess } =
+    useMarvelService();
+
+  const errorMessage = process === "error" ? <ErrorMessage /> : null;
   const results = !character ? (
     <div className="error">{message}</div>
   ) : character.length > 0 ? (
@@ -31,6 +33,7 @@ const SearchChar = () => {
   ) : null;
   // console.log(character.length);
   console.log(results);
+
   return (
     <Formik
       initialValues={{
@@ -43,11 +46,13 @@ const SearchChar = () => {
         clearError();
         getCharacterByName(values.charName)
           .then((char) => {
+            setProcess("confirmed");
             setCharacter(char);
             setMessage(`Персонаж ${char[0].name} найден`);
           })
           .catch((error) => {
             console.log(error.message);
+            setProcess("confirmed");
             setCharacter(null);
             setMessage(error.message);
           })
@@ -70,7 +75,7 @@ const SearchChar = () => {
             <button
               className="searchchar__button button button__main"
               type="submit"
-              disabled={props.isSubmitting}
+              disabled={process === "loading"}
             >
               <div className="inner">FIND</div>
             </button>

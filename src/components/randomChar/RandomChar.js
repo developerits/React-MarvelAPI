@@ -4,6 +4,8 @@ import mjolnir from "../../resources/img/mjolnir.png";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelService from "../../services/MarvelService";
+import setContent from "../../utils/setContent";
+
 //TO DO
 // 1) Try It - загрузка нового персонажа
 // 2) поменять object-fit у картинки image not found на object-fit: contain
@@ -16,7 +18,8 @@ const RandomChar = () => {
     updateChar();
   }, []);
 
-  const { loading, error, getCharacter, clearError } = useMarvelService();
+  const { loading, error, getCharacter, clearError, process, setProcess } =
+    useMarvelService();
 
   const onCharLoaded = (char) => {
     setChar(char);
@@ -31,17 +34,17 @@ const RandomChar = () => {
   const updateChar = () => {
     clearError();
     const id = randomInteger(1011000, 1011400);
-    getCharacter(id).then(onCharLoaded);
+    getCharacter(id)
+      .then(onCharLoaded)
+      .then(() => setProcess("confirmed"));
   };
 
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error) ? <View char={char} /> : null;
+  // const errorMessage = error ? <ErrorMessage /> : null;
+  // const spinner = loading ? <Spinner /> : null;
+  // const content = !(loading || error) ? <View char={char} /> : null;
   return (
     <div className="randomchar">
-      {errorMessage}
-      {spinner}
-      {content}
+      {setContent(process, View, char)}
       <div className="randomchar__static">
         <p className="randomchar__title">
           Random character for today!
@@ -58,9 +61,9 @@ const RandomChar = () => {
   );
 };
 
-const View = ({ char }) => {
-  console.log(char);
-  const { name, description, thumbnail, homepage, wiki } = char;
+const View = ({ data }) => {
+  console.log(data);
+  const { name, description, thumbnail, homepage, wiki } = data;
   const descr =
     description && description.length > 197
       ? description.slice(0, 197) + "..."
