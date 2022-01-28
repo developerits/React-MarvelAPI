@@ -1,6 +1,6 @@
 import "./charList.scss";
 import PropTypes from "prop-types";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import useMarvelService from "../../services/MarvelService";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Spinner from "../spinner/Spinner1";
@@ -123,9 +123,13 @@ const CharList = (props) => {
   //     .catch();
   // }
 
+  const elements = useMemo(() => {
+    return setContent(process, () => renderItems(charList), newItemLoading);
+  }, [process]);
+
   return (
     <div className="char__list">
-      {setContent(process, () => renderItems(charList), newItemLoading)}
+      {elements}
       <button
         className="button button__main button__long"
         onClick={() => {
