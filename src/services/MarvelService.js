@@ -19,6 +19,25 @@ const useMarvelService = () => {
     return _transformCharacter(res.data.results[0]);
   };
 
+  const getCharacterByName = (name) => {
+    return new Promise(function (resolve, reject) {
+      request(`${_apiBase}characters?name=${name}&apikey=${_apiKey}
+      `).then((result) => {
+        if (result.data.results.length) {
+          resolve(result.data.results.map(_transformCharacter));
+        } else {
+          reject(new Error("Такого персонажа нет"));
+        }
+      });
+    });
+  };
+  // const getCharacterByName = async (name) => {
+  //   const res = await request(
+  //     `${_apiBase}characters?name=${name}&apikey=${_apiKey}`
+  //   );
+  //   return _transformCharacter(res.data.results[0]);
+  // };
+
   const _transformCharacter = (char) => {
     return {
       id: char.id,
@@ -62,6 +81,7 @@ const useMarvelService = () => {
     error,
     getAllCharacters,
     getCharacter,
+    getCharacterByName,
     clearError,
     getComic,
     getAllComics,

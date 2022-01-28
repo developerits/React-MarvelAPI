@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import useMarvelService from "../../services/MarvelService";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Spinner from "../spinner/Spinner1";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 const CharList = (props) => {
   const [charList, setCharList] = useState([]);
@@ -68,28 +69,34 @@ const CharList = (props) => {
         ? { objectFit: "unset" }
         : { objectFit: "cover" };
       return (
-        <li
-          ref={(el) => (itemsRef.current[i] = el)}
-          tabIndex={0}
-          className="char__item"
-          key={item.id}
-          onClick={() => {
-            props.onCharSelected(item.id);
-            onCharFocus(i);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === " " || e.key === "Enter") {
+        <CSSTransition key={i} timeout={300} classNames="item">
+          <li
+            ref={(el) => (itemsRef.current[i] = el)}
+            tabIndex={0}
+            className="char__item"
+            key={item.id}
+            onClick={() => {
               props.onCharSelected(item.id);
               onCharFocus(i);
-            }
-          }}
-        >
-          <img src={item.thumbnail} alt={item.name} style={imgStyle} />
-          <div className="char__name">{item.name}</div>
-        </li>
+            }}
+            onKeyDown={(e) => {
+              if (e.key === " " || e.key === "Enter") {
+                props.onCharSelected(item.id);
+                onCharFocus(i);
+              }
+            }}
+          >
+            <img src={item.thumbnail} alt={item.name} style={imgStyle} />
+            <div className="char__name">{item.name}</div>
+          </li>
+        </CSSTransition>
       );
     });
-    return <ul className="char__grid">{items}</ul>;
+    return (
+      <ul className="char__grid">
+        {<TransitionGroup component={null}>{items}</TransitionGroup>}
+      </ul>
+    );
   };
 
   if (loading) {
@@ -98,11 +105,13 @@ const CharList = (props) => {
       .catch();
   }
   const items = renderItems(charList);
+  console.log(items);
   const errorMessage = error ? <ErrorMessage /> : null;
   const loader = loading && !newItemLoading ? <Spinner /> : null;
   return (
     <div className="char__list">
-      {errorMessage} {loader} {items}
+      {errorMessage} {loader}
+      {items}
       <button
         className="button button__main button__long"
         onClick={() => {
